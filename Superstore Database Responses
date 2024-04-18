@@ -1,0 +1,20 @@
+SELECT * FROM superstore
+WHERE item_id
+ORDER BY price;
+
+SELECT SUM(price), item_name
+FROM superstore
+GROUP BY (item_name);
+
+SELECT MIN(item_name), price
+FROM superstore
+GROUP BY (price) asc;
+
+SELECT *
+FROM superstore
+WHERE category='Kitchen Supplies'
+ORDER BY item_name;
+
+SELECT *
+FROM superstore
+WHERE item_name='Air Purifier';
