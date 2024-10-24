@@ -1,0 +1,136 @@
+Creating a SQL database for a financial server involves designing tables that can handle transactions, customer data, accounts, and other financial operations. Below is a basic structure of what such a database might look like.
+
+Tables:
+
+	1.	Customers: Stores customer information.
+	2.	Accounts: Stores information about different types of accounts (savings, checking, etc.).
+	3.	Transactions: Records each transaction.
+	4.	Loans: Information about loans.
+	5.	Cards: Stores details about debit or credit cards.
+	6.	Employees: Employee details (bank employees or financial advisors).
+	7.	Branch: Bank branch information.
+	8.	Audit Log: Tracks changes and actions for audit purposes.
+	9.	Financial Products: Information on available financial products (investments, insurance, etc.).
+
+SQL Database Schema
+
+-- 1. Customers Table
+CREATE TABLE Customers (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    DateOfBirth DATE,
+    Email VARCHAR(100) UNIQUE,
+    PhoneNumber VARCHAR(15),
+    Address VARCHAR(255),
+    City VARCHAR(50),
+    State VARCHAR(50),
+    ZipCode VARCHAR(10),
+    CreatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 2. Accounts Table
+CREATE TABLE Accounts (
+    AccountID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    AccountType VARCHAR(20), -- ('Savings', 'Checking', etc.)
+    Balance DECIMAL(15, 2),
+    DateOpened DATE,
+    InterestRate DECIMAL(5, 2),
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- 3. Transactions Table
+CREATE TABLE Transactions (
+    TransactionID INT PRIMARY KEY AUTO_INCREMENT,
+    AccountID INT,
+    TransactionType VARCHAR(50), -- ('Deposit', 'Withdrawal', 'Transfer', 'Payment', etc.)
+    Amount DECIMAL(15, 2),
+    TransactionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Description TEXT,
+    FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID)
+);
+
+-- 4. Loans Table
+CREATE TABLE Loans (
+    LoanID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    LoanType VARCHAR(50), -- ('Home Loan', 'Personal Loan', etc.)
+    LoanAmount DECIMAL(15, 2),
+    InterestRate DECIMAL(5, 2),
+    LoanStartDate DATE,
+    LoanEndDate DATE,
+    Status VARCHAR(20), -- ('Active', 'Closed', 'Pending', etc.)
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+);
+
+-- 5. Cards Table
+CREATE TABLE Cards (
+    CardID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    AccountID INT,
+    CardType VARCHAR(20), -- ('Debit', 'Credit', etc.)
+    CardNumber VARCHAR(16) UNIQUE,
+    ExpirationDate DATE,
+    CVV VARCHAR(4),
+    Status VARCHAR(20), -- ('Active', 'Blocked', etc.)
+    FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID),
+    FOREIGN KEY (AccountID) REFERENCES Accounts(AccountID)
+);
+
+-- 6. Employees Table
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50) NOT NULL,
+    LastName VARCHAR(50) NOT NULL,
+    Position VARCHAR(50), -- ('Teller', 'Manager', 'Advisor', etc.)
+    BranchID INT,
+    HireDate DATE,
+    Email VARCHAR(100) UNIQUE,
+    PhoneNumber VARCHAR(15),
+    FOREIGN KEY (BranchID) REFERENCES Branch(BranchID)
+);
+
+-- 7. Branch Table
+CREATE TABLE Branch (
+    BranchID INT PRIMARY KEY AUTO_INCREMENT,
+    BranchName VARCHAR(50),
+    Address VARCHAR(255),
+    City VARCHAR(50),
+    State VARCHAR(50),
+    ZipCode VARCHAR(10)
+);
+
+-- 8. Audit Log Table
+CREATE TABLE AuditLog (
+    AuditID INT PRIMARY KEY AUTO_INCREMENT,
+    TableName VARCHAR(50),
+    Action VARCHAR(50), -- ('INSERT', 'UPDATE', 'DELETE', etc.)
+    ActionBy VARCHAR(50),
+    ActionTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PreviousValues TEXT,
+    NewValues TEXT
+);
+
+-- 9. Financial Products Table
+CREATE TABLE FinancialProducts (
+    ProductID INT PRIMARY KEY AUTO_INCREMENT,
+    ProductName VARCHAR(100),
+    ProductType VARCHAR(50), -- ('Investment', 'Insurance', etc.)
+    Description TEXT,
+    InterestRate DECIMAL(5, 2),
+    MinInvestment DECIMAL(15, 2),
+    MaxInvestment DECIMAL(15, 2)
+);
+
+Explanation:
+
+	•	Customers Table: Stores the details of the bank’s customers.
+	•	Accounts Table: Links customer data with account information and tracks the account balance.
+	•	Transactions Table: Records all financial transactions with transaction type, amount, and date.
+	•	Loans Table: Tracks loans and their statuses for customers.
+	•	Cards Table: Stores information about credit or debit cards for each customer.
+	•	Employees Table: Records employee data and links them to the branches.
+	•	Branch Table: Stores details of different bank branches.
+	•	Audit Log Table: Ensures that actions are auditable by recording changes in the system.
+	•	Financial Products Table: Tracks available financial products offered to customers.
